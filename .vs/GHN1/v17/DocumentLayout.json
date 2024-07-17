@@ -1,0 +1,268 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kingg\\source\\repos\\GHN1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\controllers\\khachhangcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\controllers\\khachhangcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\controllers\\shippercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\controllers\\shippercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\shipper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\shipper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\controllers\\donhangcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\controllers\\donhangcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\hoanhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\hoanhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\taodonhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\taodonhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\loginmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\loginmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\chitietdonhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\chitietdonhangmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\models\\khachhang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\models\\khachhang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|c:\\users\\kingg\\source\\repos\\ghn1\\ghn1\\helpers\\jwthelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D34CE10-1942-4118-9FCE-F60E7893173B}|GHN1\\GHN1.csproj|solutionrelative:ghn1\\helpers\\jwthelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Class.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Class.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\Class.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Class.cs",
+              "RelativeToolTip": "GHN1\\Models\\Class.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T22:43:20.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TaoDonHangModel.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\TaoDonHangModel.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\TaoDonHangModel.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\TaoDonHangModel.cs",
+              "RelativeToolTip": "GHN1\\Models\\TaoDonHangModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:27:13.968Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Program.cs",
+              "RelativeDocumentMoniker": "GHN1\\Program.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Program.cs",
+              "RelativeToolTip": "GHN1\\Program.cs",
+              "ViewState": "AQIAAF0AAAAAAAAAAAAuwHUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:06:35.011Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "LoginModel.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\LoginModel.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\LoginModel.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\LoginModel.cs",
+              "RelativeToolTip": "GHN1\\Models\\LoginModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:00:35.88Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Shipper.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Shipper.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\Shipper.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Shipper.cs",
+              "RelativeToolTip": "GHN1\\Models\\Shipper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:00:12.089Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "KhachHang.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\KhachHang.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\KhachHang.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\KhachHang.cs",
+              "RelativeToolTip": "GHN1\\Models\\KhachHang.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:00:06.108Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Admin.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Admin.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\Admin.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\Admin.cs",
+              "RelativeToolTip": "GHN1\\Models\\Admin.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:00:00.213Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ShipperController.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\ShipperController.cs",
+              "RelativeDocumentMoniker": "GHN1\\Controllers\\ShipperController.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\ShipperController.cs",
+              "RelativeToolTip": "GHN1\\Controllers\\ShipperController.cs",
+              "ViewState": "AQIAAIEAAAAAAAAAAAAmwKIAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:58:07.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "KhachHangController.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\KhachHangController.cs",
+              "RelativeDocumentMoniker": "GHN1\\Controllers\\KhachHangController.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\KhachHangController.cs",
+              "RelativeToolTip": "GHN1\\Controllers\\KhachHangController.cs",
+              "ViewState": "AQIAANIAAAAAAAAAAAAAwNoAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:57:50.082Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "GHN1\\Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "GHN1\\Controllers\\AdminController.cs",
+              "ViewState": "AQIAACYAAAAAAAAAAAAAwD4AAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:57:24.019Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DonHangController.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\DonHangController.cs",
+              "RelativeDocumentMoniker": "GHN1\\Controllers\\DonHangController.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Controllers\\DonHangController.cs",
+              "RelativeToolTip": "GHN1\\Controllers\\DonHangController.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAYwCgAAABKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:52:40.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ChiTietDonHangModel.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\ChiTietDonHangModel.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\ChiTietDonHangModel.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\ChiTietDonHangModel.cs",
+              "RelativeToolTip": "GHN1\\Models\\ChiTietDonHangModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:27:25.846Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "HoanHangModel.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\HoanHangModel.cs",
+              "RelativeDocumentMoniker": "GHN1\\Models\\HoanHangModel.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Models\\HoanHangModel.cs",
+              "RelativeToolTip": "GHN1\\Models\\HoanHangModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T18:37:53.028Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "JwtHelper.cs",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Helpers\\JwtHelper.cs",
+              "RelativeDocumentMoniker": "GHN1\\Helpers\\JwtHelper.cs",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\Helpers\\JwtHelper.cs",
+              "RelativeToolTip": "GHN1\\Helpers\\JwtHelper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-17T17:56:49.773Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\appsettings.json",
+              "RelativeDocumentMoniker": "GHN1\\appsettings.json",
+              "ToolTip": "C:\\Users\\kingg\\source\\repos\\GHN1\\GHN1\\appsettings.json",
+              "RelativeToolTip": "GHN1\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAABHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-07-17T17:55:17.956Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
