@@ -209,12 +209,12 @@ public class AdminController : ControllerBase
 
         return NoContent();
     }
-    // Duyệt đơn hàng
     [HttpPost("duyet-don-hang")]
-    public IActionResult DuyetDonHang(int donHangId)
+    public IActionResult DuyetDonHang(int donHangId, int adminId)
     {
         using (var connection = new SqlConnection(GetConnectionString()))
         {
+            // Kiểm tra trạng thái hiện tại của đơn hàng
             var query = "SELECT TrangThaiID FROM DonHang WHERE DonHangID = @DonHangID";
             var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@DonHangID", donHangId);
@@ -228,8 +228,11 @@ public class AdminController : ControllerBase
                 return BadRequest(new { Message = "Đơn hàng không ở trạng thái 'Chờ Duyệt'." });
             }
 
-            command = new SqlCommand("UPDATE DonHang SET TrangThaiID = 2, NgayCapNhat = GETDATE() WHERE DonHangID = @DonHangID", connection);
+            // Cập nhật trạng thái đơn hàng và AdminID
+            query = "UPDATE DonHang SET TrangThaiID = 2, NgayCapNhat = GETDATE(), AdminID = @AdminID WHERE DonHangID = @DonHangID";
+            command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@DonHangID", donHangId);
+            command.Parameters.AddWithValue("@AdminID", adminId);
 
             connection.Open();
             var rowsAffected = command.ExecuteNonQuery();
@@ -243,6 +246,7 @@ public class AdminController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã được duyệt." });
         }
     }
+
 
     // Xác nhận hoàn hàng
     [HttpPost("xac-nhan-hoan-hang")]

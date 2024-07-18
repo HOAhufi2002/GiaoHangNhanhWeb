@@ -15,6 +15,8 @@
         public string DiaChiGiaoHang { get; set; }
         public string SoDienThoaiNguoiNhan { get; set; }
         public string SoDienThoaiNguoiGui { get; set; }
+        public int? AdminID { get; set; } // Thêm trường này
+
     }
 
 }
