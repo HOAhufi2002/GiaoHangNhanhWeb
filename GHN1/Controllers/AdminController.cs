@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using GHN1.Models;
+using GHN1.Helpers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -100,7 +101,7 @@ public class AdminController : ControllerBase
         }
         return Ok(donHangs);
     }
-    // Đăng ký Admin
+
     [HttpPost("register")]
     public IActionResult RegisterAdmin([FromBody] Admin admin)
     {
@@ -109,16 +110,34 @@ public class AdminController : ControllerBase
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
-        admin.Quyen = "admin";
-        admin.IsDeleted = false;
-
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
+            // Kiểm tra xem email đã tồn tại hay chưa
+            string checkQuery = "SELECT COUNT(*) FROM Admin WHERE Email = @Email";
+            SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+            checkCmd.Parameters.AddWithValue("@Email", admin.Email);
+
+            conn.Open();
+            int count = (int)checkCmd.ExecuteScalar();
+            conn.Close();
+
+            if (count > 0)
+            {
+                return Conflict("Email đã tồn tại.");
+            }
+
+            // Mã hóa mật khẩu bằng MD5
+            string hashedPassword = EncryptionHelper.ComputeMD5Hash(admin.MatKhau);
+
+            // Nếu email chưa tồn tại, thêm admin mới
+            admin.Quyen = "admin"; // Giá trị mặc định
+            admin.IsDeleted = false; // Giá trị mặc định
+
             string query = "INSERT INTO Admin (HoTen, Email, MatKhau, Quyen, IsDeleted) VALUES (@HoTen, @Email, @MatKhau, @Quyen, @IsDeleted)";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@HoTen", admin.HoTen);
             cmd.Parameters.AddWithValue("@Email", admin.Email);
-            cmd.Parameters.AddWithValue("@MatKhau", admin.MatKhau);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
             cmd.Parameters.AddWithValue("@Quyen", admin.Quyen);
             cmd.Parameters.AddWithValue("@IsDeleted", admin.IsDeleted);
 
@@ -129,6 +148,8 @@ public class AdminController : ControllerBase
 
         return Ok(admin);
     }
+
+    // Đăng nhập Admin
     [HttpPost("login")]
     public IActionResult LoginAdmin([FromBody] LoginModel model)
     {
@@ -137,13 +158,16 @@ public class AdminController : ControllerBase
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
+        // Mã hóa mật khẩu trước khi so sánh
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(model.MatKhau);
+
         Admin admin = null;
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
             string query = "SELECT * FROM Admin WHERE Email = @Email AND MatKhau = @MatKhau AND IsDeleted = 0";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@MatKhau", model.MatKhau);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
 
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -169,6 +193,37 @@ public class AdminController : ControllerBase
         return Ok(new { token, id = admin.AdminID, email = admin.Email, quyen = admin.Quyen, hoTen = admin.HoTen });
     }
 
+    // Cập nhật tài khoản admin
+    [HttpPut("update")]
+    public IActionResult UpdateAdmin([FromBody] Admin admin)
+    {
+        if (string.IsNullOrEmpty(admin.Email) || string.IsNullOrEmpty(admin.MatKhau))
+        {
+            return BadRequest("Email và Mật khẩu không được để trống.");
+        }
+
+        // Mã hóa mật khẩu trước khi lưu
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(admin.MatKhau);
+
+        using (SqlConnection conn = new SqlConnection(GetConnectionString()))
+        {
+            string query = "UPDATE Admin SET HoTen = @HoTen, Email = @Email, MatKhau = @MatKhau WHERE AdminID = @AdminID AND IsDeleted = 0";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@HoTen", admin.HoTen);
+            cmd.Parameters.AddWithValue("@Email", admin.Email);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
+            cmd.Parameters.AddWithValue("@AdminID", admin.AdminID);
+
+            conn.Open();
+            int rowsAffected = cmd.ExecuteNonQuery();
+            conn.Close();
+
+            if (rowsAffected == 0)
+                return NotFound(new { Message = "Admin không tồn tại hoặc không thể cập nhật." });
+        }
+
+        return Ok(admin);
+    }
 
     private string GenerateJwtToken(string email, string quyen)
     {

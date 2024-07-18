@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using GHN1.Models;
+using GHN1.Helpers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -33,16 +34,34 @@ public class ShipperController : ControllerBase
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
-        shipper.Quyen = "shipper";
-        shipper.IsDeleted = false;
-
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
+            // Kiểm tra xem email đã tồn tại hay chưa
+            string checkQuery = "SELECT COUNT(*) FROM Shipper WHERE Email = @Email";
+            SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+            checkCmd.Parameters.AddWithValue("@Email", shipper.Email);
+
+            conn.Open();
+            int count = (int)checkCmd.ExecuteScalar();
+            conn.Close();
+
+            if (count > 0)
+            {
+                return Conflict("Email đã tồn tại.");
+            }
+
+            // Mã hóa mật khẩu bằng MD5
+            string hashedPassword = EncryptionHelper.ComputeMD5Hash(shipper.MatKhau);
+
+            // Nếu email chưa tồn tại, thêm shipper mới
+            shipper.Quyen = "shipper"; // Giá trị mặc định
+            shipper.IsDeleted = false; // Giá trị mặc định
+
             string query = "INSERT INTO Shipper (HoTen, IsDeleted, MatKhau, Quyen, Email) VALUES (@HoTen, @IsDeleted, @MatKhau, @Quyen, @Email)";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@HoTen", shipper.HoTen);
             cmd.Parameters.AddWithValue("@IsDeleted", shipper.IsDeleted);
-            cmd.Parameters.AddWithValue("@MatKhau", shipper.MatKhau);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
             cmd.Parameters.AddWithValue("@Quyen", shipper.Quyen);
             cmd.Parameters.AddWithValue("@Email", shipper.Email);
 
@@ -63,13 +82,16 @@ public class ShipperController : ControllerBase
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
+        // Mã hóa mật khẩu trước khi so sánh
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(model.MatKhau);
+
         Shipper shipper = null;
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
             string query = "SELECT * FROM Shipper WHERE Email = @Email AND MatKhau = @MatKhau AND IsDeleted = 0";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@MatKhau", model.MatKhau);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
 
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -93,7 +115,38 @@ public class ShipperController : ControllerBase
 
         var token = GenerateJwtToken(shipper.Email, shipper.Quyen);
         return Ok(new { token, id = shipper.ShipperID, email = shipper.Email, quyen = shipper.Quyen, hoTen = shipper.HoTen });
+    }
 
+    // Cập nhật tài khoản shipper
+    [HttpPut("update")]
+    public IActionResult UpdateShipper([FromBody] Shipper shipper)
+    {
+        if (string.IsNullOrEmpty(shipper.Email) || string.IsNullOrEmpty(shipper.MatKhau))
+        {
+            return BadRequest("Email và Mật khẩu không được để trống.");
+        }
+
+        // Mã hóa mật khẩu trước khi lưu
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(shipper.MatKhau);
+
+        using (SqlConnection conn = new SqlConnection(GetConnectionString()))
+        {
+            string query = "UPDATE Shipper SET HoTen = @HoTen, Email = @Email, MatKhau = @MatKhau WHERE ShipperID = @ShipperID AND IsDeleted = 0";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@HoTen", shipper.HoTen);
+            cmd.Parameters.AddWithValue("@Email", shipper.Email);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
+            cmd.Parameters.AddWithValue("@ShipperID", shipper.ShipperID);
+
+            conn.Open();
+            int rowsAffected = cmd.ExecuteNonQuery();
+            conn.Close();
+
+            if (rowsAffected == 0)
+                return NotFound(new { Message = "Shipper không tồn tại hoặc không thể cập nhật." });
+        }
+
+        return Ok(shipper);
     }
 
     private string GenerateJwtToken(string email, string quyen)

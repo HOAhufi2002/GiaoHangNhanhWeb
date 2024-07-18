@@ -6,8 +6,8 @@
         public string HoTen { get; set; }
         public string Email { get; set; }
         public string MatKhau { get; set; }
-        public string Quyen { get; set; }
-        public bool IsDeleted { get; set; }
+        public string Quyen { get; set; } = "khachhang"; 
+        public bool IsDeleted { get; set; } = false; 
     }
 
 }

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using GHN1.Models;
+using GHN1.Helpers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -22,37 +23,60 @@ public class KhachHangController : ControllerBase
     {
         return _configuration.GetConnectionString("DefaultConnection");
     }
-
     // Đăng ký Khách Hàng
     [HttpPost("register")]
-    public IActionResult RegisterKhachHang([FromBody] KhachHang khachHang)
+    public IActionResult RegisterKhachHang([FromBody] RegisterModel registerModel)
     {
-        if (string.IsNullOrEmpty(khachHang.Email) || string.IsNullOrEmpty(khachHang.MatKhau))
+        if (string.IsNullOrEmpty(registerModel.Email) || string.IsNullOrEmpty(registerModel.MatKhau))
         {
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
-        khachHang.Quyen = "khachhang";
-        khachHang.IsDeleted = false;
-
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
+            // Kiểm tra xem email đã tồn tại hay chưa
+            string checkQuery = "SELECT COUNT(*) FROM KhachHang WHERE Email = @Email";
+            SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+            checkCmd.Parameters.AddWithValue("@Email", registerModel.Email);
+
+            conn.Open();
+            int count = (int)checkCmd.ExecuteScalar();
+            conn.Close();
+
+            if (count > 0)
+            {
+                return Conflict("Email đã tồn tại.");
+            }
+
+            // Mã hóa mật khẩu bằng MD5
+            string hashedPassword = EncryptionHelper.ComputeMD5Hash(registerModel.MatKhau);
+
+            // Nếu email chưa tồn tại, thêm khách hàng mới
             string query = "INSERT INTO KhachHang (HoTen, Email, MatKhau, Quyen, IsDeleted) VALUES (@HoTen, @Email, @MatKhau, @Quyen, @IsDeleted)";
             SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@HoTen", khachHang.HoTen);
-            cmd.Parameters.AddWithValue("@Email", khachHang.Email);
-            cmd.Parameters.AddWithValue("@MatKhau", khachHang.MatKhau);
-            cmd.Parameters.AddWithValue("@Quyen", khachHang.Quyen);
-            cmd.Parameters.AddWithValue("@IsDeleted", khachHang.IsDeleted);
+            cmd.Parameters.AddWithValue("@HoTen", registerModel.HoTen);
+            cmd.Parameters.AddWithValue("@Email", registerModel.Email);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
+            cmd.Parameters.AddWithValue("@Quyen", "khachhang"); // Giá trị mặc định
+            cmd.Parameters.AddWithValue("@IsDeleted", false); // Giá trị mặc định
 
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
         }
 
+        // Khởi tạo đối tượng KhachHang để trả về
+        var khachHang = new KhachHang
+        {
+            HoTen = registerModel.HoTen,
+            Email = registerModel.Email,
+            MatKhau = registerModel.MatKhau,
+            Quyen = "khachhang",
+            IsDeleted = false
+        };
+
         return Ok(khachHang);
     }
-
     // Đăng nhập Khách Hàng
     [HttpPost("login")]
     public IActionResult LoginKhachHang([FromBody] LoginModel model)
@@ -62,13 +86,16 @@ public class KhachHangController : ControllerBase
             return BadRequest("Email và Mật khẩu không được để trống.");
         }
 
+        // Mã hóa mật khẩu trước khi so sánh
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(model.MatKhau);
+
         KhachHang khachHang = null;
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
             string query = "SELECT * FROM KhachHang WHERE Email = @Email AND MatKhau = @MatKhau AND IsDeleted = 0";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@MatKhau", model.MatKhau);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
 
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -92,30 +119,42 @@ public class KhachHangController : ControllerBase
 
         var token = GenerateJwtToken(khachHang.Email, khachHang.Quyen);
         return Ok(new { token, id = khachHang.KhachHangID, email = khachHang.Email, quyen = khachHang.Quyen, hoTen = khachHang.HoTen });
-
     }
 
-    private string GenerateJwtToken(string email, string quyen)
+    // Cập nhật tài khoản khách hàng
+    [HttpPut("update")]
+    public IActionResult UpdateKhachHang([FromBody] KhachHang khachHang)
     {
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
+        if (string.IsNullOrEmpty(khachHang.Email) || string.IsNullOrEmpty(khachHang.MatKhau))
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim("quyen", quyen),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            }),
-            Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
+            return BadRequest("Email và Mật khẩu không được để trống.");
+        }
 
+        // Mã hóa mật khẩu trước khi lưu
+        string hashedPassword = EncryptionHelper.ComputeMD5Hash(khachHang.MatKhau);
+
+        using (SqlConnection conn = new SqlConnection(GetConnectionString()))
+        {
+            string query = "UPDATE KhachHang SET HoTen = @HoTen, Email = @Email, MatKhau = @MatKhau WHERE KhachHangID = @KhachHangID AND IsDeleted = 0";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@HoTen", khachHang.HoTen);
+            cmd.Parameters.AddWithValue("@Email", khachHang.Email);
+            cmd.Parameters.AddWithValue("@MatKhau", hashedPassword);
+            cmd.Parameters.AddWithValue("@KhachHangID", khachHang.KhachHangID);
+
+            conn.Open();
+            int rowsAffected = cmd.ExecuteNonQuery();
+            conn.Close();
+
+            if (rowsAffected == 0)
+                return NotFound(new { Message = "Khách hàng không tồn tại hoặc không thể cập nhật." });
+        }
+
+        return Ok(khachHang);
+    }
     // Xóa Khách Hàng
     [HttpDelete("{id}")]
+
     public IActionResult DeleteKhachHang(int id)
     {
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
@@ -287,4 +326,23 @@ public class KhachHangController : ControllerBase
             }
         }
     }
+    private string GenerateJwtToken(string email, string quyen)
+    {
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, email),
+                new Claim("quyen", quyen),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            }),
+            Expires = DateTime.UtcNow.AddHours(1),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+
 }
