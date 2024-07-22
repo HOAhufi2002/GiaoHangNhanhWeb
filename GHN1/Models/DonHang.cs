@@ -16,6 +16,7 @@
         public string SoDienThoaiNguoiNhan { get; set; }
         public string SoDienThoaiNguoiGui { get; set; }
         public int? AdminID { get; set; } // Thêm trường này
+        public string HoTenKhachHang { get; set; } // Thêm thuộc tính này
 
     }
 

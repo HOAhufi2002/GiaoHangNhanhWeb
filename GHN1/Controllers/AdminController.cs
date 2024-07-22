@@ -24,18 +24,46 @@ public class AdminController : ControllerBase
         return _configuration.GetConnectionString("DefaultConnection");
     }
     [HttpGet("hoan-hang-dang-xu-ly")]
-    public IActionResult GetHoanHangDangXuLy()
+    public IActionResult GetHoanHangDangXuLy([FromQuery] HoanHangDangXuLyQueryParams queryParams)
     {
         List<DonHang> donHangs = new List<DonHang>();
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
-            string query = @"SELECT d.DonHangID, d.KhachHangID, d.ShipperID, d.TrangThaiID, t.MoTaTrangThai AS TenTrangThai, 
-                             d.NgayTao, d.NgayCapNhat, d.IsDeleted, d.DiaChiNhanHang, d.DiaChiGiaoHang, 
-                             d.SoDienThoaiNguoiNhan, d.SoDienThoaiNguoiGui
-                             FROM DonHang d
-                             JOIN TrangThaiDonHang t ON d.TrangThaiID = t.TrangThaiID
-                             WHERE d.TrangThaiID = 5 AND d.IsDeleted = 0"; // Giả sử 5 là ID cho trạng thái "Hoàn hàng đang xử lý"
+            string query = @"
+            SELECT 
+                d.DonHangID,
+                d.KhachHangID,
+                d.ShipperID,
+                d.TrangThaiID,
+                t.MoTaTrangThai AS TenTrangThai, 
+                d.NgayTao, 
+                d.NgayCapNhat, 
+                d.IsDeleted, 
+                d.DiaChiNhanHang, 
+                d.DiaChiGiaoHang, 
+                d.SoDienThoaiNguoiNhan, 
+                d.SoDienThoaiNguoiGui, 
+                k.HoTen AS HoTenKhachHang
+            FROM 
+                DonHang d
+            JOIN 
+                TrangThaiDonHang t ON d.TrangThaiID = t.TrangThaiID
+            JOIN 
+                KhachHang k ON d.KhachHangID = k.KhachHangID
+            WHERE 
+                d.TrangThaiID = 5 AND d.IsDeleted = 0"; // Giả sử 5 là ID cho trạng thái "Hoàn hàng đang xử lý"
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (k.HoTen LIKE @Search OR d.DiaChiNhanHang LIKE @Search OR d.DiaChiGiaoHang LIKE @Search OR d.SoDienThoaiNguoiNhan LIKE @Search OR d.SoDienThoaiNguoiGui LIKE @Search)";
+            }
+
             SqlCommand cmd = new SqlCommand(query, conn);
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                cmd.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
 
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -54,7 +82,8 @@ public class AdminController : ControllerBase
                     DiaChiNhanHang = reader["DiaChiNhanHang"].ToString(),
                     DiaChiGiaoHang = reader["DiaChiGiaoHang"].ToString(),
                     SoDienThoaiNguoiNhan = reader["SoDienThoaiNguoiNhan"].ToString(),
-                    SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"].ToString()
+                    SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"].ToString(),
+                    HoTenKhachHang = reader["HoTenKhachHang"].ToString()
                 };
                 donHangs.Add(donHang);
             }
@@ -62,19 +91,34 @@ public class AdminController : ControllerBase
         }
         return Ok(donHangs);
     }
+
+
+
     [HttpGet("cho-duyet")]
-    public IActionResult GetDonHangChoDuyet()
+    public IActionResult GetDonHangChoDuyet([FromQuery] DonHangChoDuyetQueryParams queryParams)
     {
         List<DonHang> donHangs = new List<DonHang>();
         using (SqlConnection conn = new SqlConnection(GetConnectionString()))
         {
             string query = @"SELECT d.DonHangID, d.KhachHangID, d.ShipperID, d.TrangThaiID, t.MoTaTrangThai AS TenTrangThai, 
-                             d.NgayTao, d.NgayCapNhat, d.IsDeleted, d.DiaChiNhanHang, d.DiaChiGiaoHang, 
-                             d.SoDienThoaiNguoiNhan, d.SoDienThoaiNguoiGui
-                             FROM DonHang d
-                             JOIN TrangThaiDonHang t ON d.TrangThaiID = t.TrangThaiID
-                             WHERE d.TrangThaiID = 1 AND d.IsDeleted = 0";
+                         d.NgayTao, d.NgayCapNhat, d.IsDeleted, d.DiaChiNhanHang, d.DiaChiGiaoHang, 
+                         d.SoDienThoaiNguoiNhan, d.SoDienThoaiNguoiGui, k.HoTen AS HoTenKhachHang
+                         FROM DonHang d
+                         JOIN TrangThaiDonHang t ON d.TrangThaiID = t.TrangThaiID
+                         JOIN KhachHang k ON d.KhachHangID = k.KhachHangID
+                         WHERE d.TrangThaiID = 1 AND d.IsDeleted = 0";
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (k.HoTen LIKE @Search OR d.DiaChiNhanHang LIKE @Search OR d.DiaChiGiaoHang LIKE @Search OR d.SoDienThoaiNguoiNhan LIKE @Search OR d.SoDienThoaiNguoiGui LIKE @Search)";
+            }
+
             SqlCommand cmd = new SqlCommand(query, conn);
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                cmd.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
 
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -93,7 +137,8 @@ public class AdminController : ControllerBase
                     DiaChiNhanHang = reader["DiaChiNhanHang"].ToString(),
                     DiaChiGiaoHang = reader["DiaChiGiaoHang"].ToString(),
                     SoDienThoaiNguoiNhan = reader["SoDienThoaiNguoiNhan"].ToString(),
-                    SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"].ToString()
+                    SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"].ToString(),
+                    HoTenKhachHang = reader["HoTenKhachHang"].ToString() // Lấy thêm thông tin HoTen
                 };
                 donHangs.Add(donHang);
             }
@@ -394,22 +439,33 @@ public class AdminController : ControllerBase
             return Ok(new { SoLuongDonHangHoanHang = soLuong });
         }
     }
-    // API danh sách khách hàng
     [HttpGet("danh-sach-khach-hang")]
-    public IActionResult DanhSachKhachHang()
+    public IActionResult DanhSachKhachHang([FromQuery] SearchQueryParams queryParams)
     {
         using (var connection = new SqlConnection(GetConnectionString()))
         {
             var query = @"
-                SELECT 
-                    KhachHangID,
-                    HoTen,
-                    Email,
-                    IsDeleted
-                FROM 
-                    KhachHang";
+            SELECT 
+                KhachHangID,
+                HoTen,
+                Email,
+                IsDeleted
+            FROM 
+                KhachHang
+            WHERE 
+                IsDeleted = 0";
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (HoTen LIKE @Search OR Email LIKE @Search)";
+            }
 
             var command = new SqlCommand(query, connection);
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
 
             connection.Open();
             var reader = command.ExecuteReader();
@@ -429,94 +485,127 @@ public class AdminController : ControllerBase
             return Ok(khachHangList);
         }
     }
-    // API danh sách người dùng
     [HttpGet("danh-sach-nguoi-dung")]
-    public IActionResult DanhSachNguoiDung()
+    public IActionResult DanhSachNguoiDung([FromQuery] SearchQueryParams queryParams)
     {
         using (var connection = new SqlConnection(GetConnectionString()))
         {
             var queryKhachHang = @"
-                SELECT 
-                    KhachHangID AS UserID,
-                    HoTen,
-                    Email,
-                    'KhachHang' AS UserType,
-                    IsDeleted
-                FROM 
-                    KhachHang";
+            SELECT 
+                KhachHangID AS UserID,
+                HoTen,
+                Email,
+                'KhachHang' AS UserType,
+                IsDeleted
+            FROM 
+                KhachHang
+            WHERE 
+                IsDeleted = 0";
 
             var queryAdmin = @"
-                SELECT 
-                    AdminID AS UserID,
-                    HoTen,
-                    Email,
-                    'Admin' AS UserType,
-                    IsDeleted
-                FROM 
-                    Admin";
+            SELECT 
+                AdminID AS UserID,
+                HoTen,
+                Email,
+                'Admin' AS UserType,
+                IsDeleted
+            FROM 
+                Admin
+            WHERE 
+                IsDeleted = 0";
 
             var queryShipper = @"
-                SELECT 
-                    ShipperID AS UserID,
-                    HoTen,
-                    Email,
-                    'Shipper' AS UserType,
-                    IsDeleted
-                FROM 
-                    Shipper";
+            SELECT 
+                ShipperID AS UserID,
+                HoTen,
+                Email,
+                'Shipper' AS UserType,
+                IsDeleted
+            FROM 
+                Shipper
+            WHERE 
+                IsDeleted = 0";
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                queryKhachHang += " AND (HoTen LIKE @Search OR Email LIKE @Search)";
+                queryAdmin += " AND (HoTen LIKE @Search OR Email LIKE @Search)";
+                queryShipper += " AND (HoTen LIKE @Search OR Email LIKE @Search)";
+            }
 
             var users = new List<object>();
 
             connection.Open();
 
             using (var command = new SqlCommand(queryKhachHang, connection))
-            using (var reader = command.ExecuteReader())
             {
-                while (reader.Read())
+                if (!string.IsNullOrEmpty(queryParams.Search))
                 {
-                    var user = new
+                    command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        UserID = reader["UserID"],
-                        HoTen = reader["HoTen"],
-                        Email = reader["Email"],
-                        UserType = reader["UserType"],
-                        IsDeleted = reader["IsDeleted"]
-                    };
-                    users.Add(user);
+                        var user = new
+                        {
+                            UserID = reader["UserID"],
+                            HoTen = reader["HoTen"],
+                            Email = reader["Email"],
+                            UserType = reader["UserType"],
+                            IsDeleted = reader["IsDeleted"]
+                        };
+                        users.Add(user);
+                    }
                 }
             }
 
             using (var command = new SqlCommand(queryAdmin, connection))
-            using (var reader = command.ExecuteReader())
             {
-                while (reader.Read())
+                if (!string.IsNullOrEmpty(queryParams.Search))
                 {
-                    var user = new
+                    command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        UserID = reader["UserID"],
-                        HoTen = reader["HoTen"],
-                        Email = reader["Email"],
-                        UserType = reader["UserType"],
-                        IsDeleted = reader["IsDeleted"]
-                    };
-                    users.Add(user);
+                        var user = new
+                        {
+                            UserID = reader["UserID"],
+                            HoTen = reader["HoTen"],
+                            Email = reader["Email"],
+                            UserType = reader["UserType"],
+                            IsDeleted = reader["IsDeleted"]
+                        };
+                        users.Add(user);
+                    }
                 }
             }
 
             using (var command = new SqlCommand(queryShipper, connection))
-            using (var reader = command.ExecuteReader())
             {
-                while (reader.Read())
+                if (!string.IsNullOrEmpty(queryParams.Search))
                 {
-                    var user = new
+                    command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        UserID = reader["UserID"],
-                        HoTen = reader["HoTen"],
-                        Email = reader["Email"],
-                        UserType = reader["UserType"],
-                        IsDeleted = reader["IsDeleted"]
-                    };
-                    users.Add(user);
+                        var user = new
+                        {
+                            UserID = reader["UserID"],
+                            HoTen = reader["HoTen"],
+                            Email = reader["Email"],
+                            UserType = reader["UserType"],
+                            IsDeleted = reader["IsDeleted"]
+                        };
+                        users.Add(user);
+                    }
                 }
             }
 
@@ -524,4 +613,142 @@ public class AdminController : ControllerBase
             return Ok(users);
         }
     }
+    [HttpGet("danh-sach-shipper")]
+    public IActionResult DanhSachShipper([FromQuery] SearchQueryParams queryParams)
+    {
+        using (var connection = new SqlConnection(GetConnectionString()))
+        {
+            var query = @"
+        SELECT 
+            ShipperID,
+            HoTen,
+            Email,
+
+            IsDeleted
+        FROM 
+            Shipper
+        WHERE 
+            IsDeleted = 0";
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (HoTen LIKE @Search OR Email LIKE @Search)";
+            }
+
+            var command = new SqlCommand(query, connection);
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
+
+            connection.Open();
+            var reader = command.ExecuteReader();
+            var shipperList = new List<object>();
+            while (reader.Read())
+            {
+                var shipper = new
+                {
+                    ShipperID = reader["ShipperID"],
+                    HoTen = reader["HoTen"],
+                    Email = reader["Email"],
+              
+                    IsDeleted = reader["IsDeleted"]
+                };
+                shipperList.Add(shipper);
+            }
+            connection.Close();
+            return Ok(shipperList);
+        }
+    }
+
+    [HttpGet("tat-ca-don-hang")]
+    public IActionResult LayTatCaDonHang([FromQuery] SearchQueryParams1 queryParams)
+    {
+        using (var connection = new SqlConnection(GetConnectionString()))
+        {
+            var query = @"
+        SELECT 
+            dh.DonHangID,
+            dh.KhachHangID,
+            dh.ShipperID,
+            dh.TrangThaiID,
+            tt.MoTaTrangThai,
+            dh.DiaChiNhanHang,
+            dh.DiaChiGiaoHang,
+            dh.SoDienThoaiNguoiNhan,
+            dh.SoDienThoaiNguoiGui,
+            dh.NgayTao,
+            dh.NgayCapNhat,
+            kh.HoTen AS HoTenKhachHang
+        FROM 
+            DonHang dh
+        LEFT JOIN 
+            TrangThaiDonHang tt ON dh.TrangThaiID = tt.TrangThaiID
+        LEFT JOIN
+            KhachHang kh ON dh.KhachHangID = kh.KhachHangID
+        WHERE 
+            dh.IsDeleted = 0";
+
+            if (queryParams.TrangThaiId.HasValue)
+            {
+                query += " AND dh.TrangThaiID = @TrangThaiID";
+            }
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (dh.DiaChiNhanHang LIKE @Search OR dh.DiaChiGiaoHang LIKE @Search OR dh.SoDienThoaiNguoiNhan LIKE @Search OR dh.SoDienThoaiNguoiGui LIKE @Search OR kh.HoTen LIKE @Search)";
+            }
+
+            var command = new SqlCommand(query, connection);
+
+            if (queryParams.TrangThaiId.HasValue)
+            {
+                command.Parameters.AddWithValue("@TrangThaiID", queryParams.TrangThaiId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
+
+            connection.Open();
+            var reader = command.ExecuteReader();
+            var donHangList = new List<object>();
+            while (reader.Read())
+            {
+                var donHang = new
+                {
+                    DonHangID = reader["DonHangID"],
+                    KhachHangID = reader["KhachHangID"],
+                    ShipperID = reader["ShipperID"],
+                    TrangThaiID = reader["TrangThaiID"],
+                    MoTaTrangThai = reader["MoTaTrangThai"],
+                    DiaChiNhanHang = reader["DiaChiNhanHang"],
+                    DiaChiGiaoHang = reader["DiaChiGiaoHang"],
+                    SoDienThoaiNguoiNhan = reader["SoDienThoaiNguoiNhan"],
+                    SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"],
+                    NgayTao = reader["NgayTao"],
+                    NgayCapNhat = reader["NgayCapNhat"],
+                    HoTenKhachHang = reader["HoTenKhachHang"]
+                };
+                donHangList.Add(donHang);
+            }
+            connection.Close();
+            return Ok(donHangList);
+        }
+    }
+
+}
+public class HoanHangDangXuLyQueryParams
+{
+    public string Search { get; set; } = "";
+}
+public class DonHangChoDuyetQueryParams
+{
+    public string Search { get; set; } = "";
+}
+public class SearchQueryParams
+{
+    public string Search { get; set; } = "";
 }

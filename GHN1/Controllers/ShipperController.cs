@@ -190,32 +190,44 @@ public class ShipperController : ControllerBase
     }
 
 
-    // Xem các đơn hàng shipper có thể nhận
     [HttpGet("don-hang-co-the-nhan")]
-    public IActionResult XemDonHangCoTheNhan()
+    public IActionResult XemDonHangCoTheNhan([FromQuery] SearchQueryParams queryParams)
     {
         using (var connection = new SqlConnection(GetConnectionString()))
         {
             var query = @"
-                SELECT 
-                    dh.DonHangID,
-                    dh.KhachHangID,
-                    dh.TrangThaiID,
-                    tt.MoTaTrangThai,
-                    dh.DiaChiNhanHang,
-                    dh.DiaChiGiaoHang,
-                    dh.SoDienThoaiNguoiNhan,
-                    dh.SoDienThoaiNguoiGui,
-                    dh.NgayTao,
-                    dh.NgayCapNhat
-                FROM 
-                    DonHang dh
-                LEFT JOIN 
-                    TrangThaiDonHang tt ON dh.TrangThaiID = tt.TrangThaiID
-                WHERE 
-                    dh.TrangThaiID = 2"; // Trạng thái "Đã Duyệt" hoặc trạng thái tương ứng
+            SELECT 
+                dh.DonHangID,
+                dh.KhachHangID,
+                dh.TrangThaiID,
+                tt.MoTaTrangThai,
+                dh.DiaChiNhanHang,
+                dh.DiaChiGiaoHang,
+                dh.SoDienThoaiNguoiNhan,
+                dh.SoDienThoaiNguoiGui,
+                dh.NgayTao,
+                dh.NgayCapNhat,
+                kh.HoTen AS HoTenKhachHang
+            FROM 
+                DonHang dh
+            LEFT JOIN 
+                TrangThaiDonHang tt ON dh.TrangThaiID = tt.TrangThaiID
+            LEFT JOIN
+                KhachHang kh ON dh.KhachHangID = kh.KhachHangID
+            WHERE 
+                dh.TrangThaiID = 2 AND dh.IsDeleted = 0"; // Trạng thái "Đã Duyệt" hoặc trạng thái tương ứng
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                query += " AND (kh.HoTen LIKE @Search OR dh.DiaChiNhanHang LIKE @Search OR dh.DiaChiGiaoHang LIKE @Search OR dh.SoDienThoaiNguoiNhan LIKE @Search OR dh.SoDienThoaiNguoiGui LIKE @Search)";
+            }
 
             var command = new SqlCommand(query, connection);
+
+            if (!string.IsNullOrEmpty(queryParams.Search))
+            {
+                command.Parameters.AddWithValue("@Search", "%" + queryParams.Search + "%");
+            }
 
             connection.Open();
             var reader = command.ExecuteReader();
@@ -233,7 +245,8 @@ public class ShipperController : ControllerBase
                     SoDienThoaiNguoiNhan = reader["SoDienThoaiNguoiNhan"],
                     SoDienThoaiNguoiGui = reader["SoDienThoaiNguoiGui"],
                     NgayTao = reader["NgayTao"],
-                    NgayCapNhat = reader["NgayCapNhat"]
+                    NgayCapNhat = reader["NgayCapNhat"],
+                    HoTenKhachHang = reader["HoTenKhachHang"]
                 };
                 donHangList.Add(donHang);
             }
