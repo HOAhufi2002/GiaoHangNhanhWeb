@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using GHN1.Models;
 using GHN1.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -23,6 +24,7 @@ public class AdminController : ControllerBase
     {
         return _configuration.GetConnectionString("DefaultConnection");
     }
+    [Authorize]
     [HttpGet("hoan-hang-dang-xu-ly")]
     public IActionResult GetHoanHangDangXuLy([FromQuery] HoanHangDangXuLyQueryParams queryParams)
     {
@@ -93,7 +95,7 @@ public class AdminController : ControllerBase
     }
 
 
-
+    [Authorize]
     [HttpGet("cho-duyet")]
     public IActionResult GetDonHangChoDuyet([FromQuery] DonHangChoDuyetQueryParams queryParams)
     {
@@ -147,6 +149,7 @@ public class AdminController : ControllerBase
         return Ok(donHangs);
     }
 
+    [Authorize]
     [HttpPost("register")]
     public IActionResult RegisterAdmin([FromBody] Admin admin)
     {
@@ -237,7 +240,8 @@ public class AdminController : ControllerBase
         var token = GenerateJwtToken(admin.Email, admin.Quyen);
         return Ok(new { token, id = admin.AdminID, email = admin.Email, quyen = admin.Quyen, hoTen = admin.HoTen });
     }
-
+    
+    [Authorize]
     // Cập nhật tài khoản admin
     [HttpPut("update")]
     public IActionResult UpdateAdmin([FromBody] Admin admin)
@@ -280,7 +284,9 @@ public class AdminController : ControllerBase
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim("quyen", quyen),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss,_configuration["JWT:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud,_configuration["JWT:Audience"])
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -288,7 +294,8 @@ public class AdminController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
+    
+    [Authorize]
     // Xóa Admin
     [HttpDelete("{id}")]
     public IActionResult DeleteAdmin(int id)
@@ -309,6 +316,8 @@ public class AdminController : ControllerBase
 
         return NoContent();
     }
+
+    [Authorize]
     [HttpPost("duyet-don-hang")]
     public IActionResult DuyetDonHang(int donHangId, int adminId)
     {
@@ -346,9 +355,9 @@ public class AdminController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã được duyệt." });
         }
     }
-
-
     // Xác nhận hoàn hàng
+
+    [Authorize]
     [HttpPost("xac-nhan-hoan-hang")]
     public IActionResult XacNhanHoanHang(int donHangId, int adminId)
     {
@@ -392,9 +401,10 @@ public class AdminController : ControllerBase
         }
     }
 
-
+    [Authorize]
     // Thống kê số lượng đơn hàng đã hoàn tất giao
     [HttpGet("thong-ke-don-hang-hoan-tat-giao")]
+    [Authorize]
     public IActionResult ThongKeDonHangHoanTatGiao()
     {
         using (var connection = new SqlConnection(GetConnectionString()))
@@ -416,6 +426,7 @@ public class AdminController : ControllerBase
             return Ok(new { SoLuongDonHangHoanTatGiao = soLuong });
         }
     }
+    [Authorize]
     // Thống kê số lượng đơn hàng đã hoàn hàng
     [HttpGet("thong-ke-don-hang-hoan-hang")]
     public IActionResult ThongKeDonHangHoanHang()
@@ -439,6 +450,7 @@ public class AdminController : ControllerBase
             return Ok(new { SoLuongDonHangHoanHang = soLuong });
         }
     }
+    [Authorize]
     [HttpGet("danh-sach-khach-hang")]
     public IActionResult DanhSachKhachHang([FromQuery] SearchQueryParams queryParams)
     {
@@ -485,6 +497,7 @@ public class AdminController : ControllerBase
             return Ok(khachHangList);
         }
     }
+    [Authorize]
     [HttpGet("danh-sach-nguoi-dung")]
     public IActionResult DanhSachNguoiDung([FromQuery] SearchQueryParams queryParams)
     {
@@ -613,6 +626,7 @@ public class AdminController : ControllerBase
             return Ok(users);
         }
     }
+    [Authorize]
     [HttpGet("danh-sach-shipper")]
     public IActionResult DanhSachShipper([FromQuery] SearchQueryParams queryParams)
     {
@@ -661,7 +675,7 @@ public class AdminController : ControllerBase
             return Ok(shipperList);
         }
     }
-
+    [Authorize]
     [HttpGet("tat-ca-don-hang")]
     public IActionResult LayTatCaDonHang([FromQuery] SearchQueryParams1 queryParams)
     {
@@ -736,6 +750,40 @@ public class AdminController : ControllerBase
             }
             connection.Close();
             return Ok(donHangList);
+        }
+    }
+    [HttpGet("tat-ca-trang-thai")]
+    public IActionResult LayTatCaTrangThaiDonHang()
+    {
+        using (var connection = new SqlConnection(GetConnectionString()))
+        {
+            var query = @"
+        SELECT 
+            TrangThaiID,
+            MoTaTrangThai,
+            IsDeleted
+        FROM 
+            TrangThaiDonHang
+        WHERE 
+            IsDeleted = 0";
+
+            var command = new SqlCommand(query, connection);
+
+            connection.Open();
+            var reader = command.ExecuteReader();
+            var trangThaiList = new List<object>();
+            while (reader.Read())
+            {
+                var trangThai = new
+                {
+                    TrangThaiID = reader["TrangThaiID"],
+                    MoTaTrangThai = reader["MoTaTrangThai"],
+                    IsDeleted = reader["IsDeleted"]
+                };
+                trangThaiList.Add(trangThai);
+            }
+            connection.Close();
+            return Ok(trangThaiList);
         }
     }
 

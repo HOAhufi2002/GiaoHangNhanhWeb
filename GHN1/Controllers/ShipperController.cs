@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using GHN1.Models;
 using GHN1.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -116,7 +117,7 @@ public class ShipperController : ControllerBase
         var token = GenerateJwtToken(shipper.Email, shipper.Quyen);
         return Ok(new { token, id = shipper.ShipperID, email = shipper.Email, quyen = shipper.Quyen, hoTen = shipper.HoTen });
     }
-
+    [Authorize]
     // Cập nhật tài khoản shipper
     [HttpPut("update")]
     public IActionResult UpdateShipper([FromBody] Shipper shipper)
@@ -148,7 +149,6 @@ public class ShipperController : ControllerBase
 
         return Ok(shipper);
     }
-
     private string GenerateJwtToken(string email, string quyen)
     {
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
@@ -159,7 +159,9 @@ public class ShipperController : ControllerBase
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim("quyen", quyen),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss,_configuration["JWT:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud,_configuration["JWT:Audience"])
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -167,7 +169,7 @@ public class ShipperController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
+    [Authorize]
     // Xóa Shipper
     [HttpDelete("{id}")]
     public IActionResult DeleteShipper(int id)
@@ -189,7 +191,7 @@ public class ShipperController : ControllerBase
         return NoContent();
     }
 
-
+    [Authorize]
     [HttpGet("don-hang-co-the-nhan")]
     public IActionResult XemDonHangCoTheNhan([FromQuery] SearchQueryParams queryParams)
     {
@@ -254,7 +256,7 @@ public class ShipperController : ControllerBase
             return Ok(donHangList);
         }
     }
-
+    [Authorize]
     // Cập nhật trạng thái đơn hàng sang Đang Giao Hàng và thêm ShipperID
     [HttpPost("nhan-don-hang")]
     public IActionResult NhanDonHang(int donHangId, int shipperId)
@@ -290,7 +292,7 @@ public class ShipperController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã chuyển sang trạng thái 'Đang Giao Hàng'." });
         }
     }
-
+    [Authorize]
     // Xác nhận đơn hàng đã giao
     [HttpPost("xac-nhan-giao-hang")]
     public IActionResult XacNhanGiaoHang(int donHangId)
@@ -325,7 +327,7 @@ public class ShipperController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã được xác nhận là 'Đã Giao'." });
         }
     }
-
+    [Authorize]
     // Đánh dấu đơn hàng là Hoàn hàng đang xử lý
     [HttpPost("hoan-hang")]
     public IActionResult HoanHang(int donHangId, [FromBody] string lyDo)

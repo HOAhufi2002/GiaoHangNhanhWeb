@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using GHN1.Models;
 using GHN1.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -120,7 +121,7 @@ public class KhachHangController : ControllerBase
         var token = GenerateJwtToken(khachHang.Email, khachHang.Quyen);
         return Ok(new { token, id = khachHang.KhachHangID, email = khachHang.Email, quyen = khachHang.Quyen, hoTen = khachHang.HoTen });
     }
-
+    [Authorize]
     // Cập nhật tài khoản khách hàng
     [HttpPut("update")]
     public IActionResult UpdateKhachHang([FromBody] KhachHang khachHang)
@@ -152,7 +153,7 @@ public class KhachHangController : ControllerBase
 
         return Ok(khachHang);
     }
-    // Xóa Khách Hàng
+    [Authorize]
     [HttpDelete("{id}")]
 
     public IActionResult DeleteKhachHang(int id)
@@ -173,7 +174,7 @@ public class KhachHangController : ControllerBase
 
         return NoContent();
     }
-    // Tạo đơn hàng mới
+    [Authorize]
     [HttpPost("tao-don-hang")]
     public IActionResult TaoDonHang([FromBody] TaoDonHangModel donHang)
     {
@@ -220,6 +221,7 @@ public class KhachHangController : ControllerBase
             }
         }
     }
+    [Authorize]
     [HttpGet("don-hang/{khachHangId}")]
     public IActionResult XemDanhSachDonHang(int khachHangId, [FromQuery] SearchQueryParams1 queryParams)
     {
@@ -295,7 +297,7 @@ public class KhachHangController : ControllerBase
             return Ok(donHangList);
         }
     }
-
+    [Authorize]
     [HttpGet("xem-trang-thai-don-hang/{donHangId}")]
     public IActionResult XemTrangThaiDonHang(int donHangId, [FromQuery] SearchQueryParams queryParams)
     {
@@ -385,7 +387,9 @@ public class KhachHangController : ControllerBase
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim("quyen", quyen),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss,_configuration["JWT:Issuer"]),
+                new Claim(JwtRegisteredClaimNames.Aud,_configuration["JWT:Audience"])
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -393,7 +397,6 @@ public class KhachHangController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
 }
 public class SearchQueryParams1
 {

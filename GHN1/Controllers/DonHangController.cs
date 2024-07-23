@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 
 namespace GHN1.Controllers
@@ -18,9 +19,9 @@ namespace GHN1.Controllers
             {
                 return _configuration.GetConnectionString("DefaultConnection");
             }
-
-            // Tra cứu trạng thái đơn hàng
-            [HttpGet("tra-cuu-trang-thai/{donHangId}")]
+        [Authorize]
+        // Tra cứu trạng thái đơn hàng
+        [HttpGet("tra-cuu-trang-thai/{donHangId}")]
             public IActionResult TraCuuTrangThaiDonHang(int donHangId)
             {
                 using (var connection = new SqlConnection(GetConnectionString()))

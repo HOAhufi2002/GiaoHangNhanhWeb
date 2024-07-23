@@ -29,6 +29,7 @@ if (string.IsNullOrEmpty(key))
 }
 
 var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
 if (string.IsNullOrEmpty(issuer))
 {
     Console.WriteLine("Jwt:Issuer is null or empty.");
@@ -52,7 +53,7 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = issuer,
-        ValidAudience = issuer,
+        ValidAudience = audience,
         IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
     };
 });
