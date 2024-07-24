@@ -174,7 +174,6 @@ public class KhachHangController : ControllerBase
 
         return NoContent();
     }
-    [Authorize]
     [HttpPost("tao-don-hang")]
     public IActionResult TaoDonHang([FromBody] TaoDonHangModel donHang)
     {
@@ -186,19 +185,20 @@ public class KhachHangController : ControllerBase
             {
                 try
                 {
-                    var command = new SqlCommand("INSERT INTO DonHang (KhachHangID, TrangThaiID, DiaChiNhanHang, DiaChiGiaoHang, SoDienThoaiNguoiNhan, SoDienThoaiNguoiGui, NgayTao, NgayCapNhat, IsDeleted) OUTPUT INSERTED.DonHangID VALUES (@KhachHangID, 1, @DiaChiNhanHang, @DiaChiGiaoHang, @SoDienThoaiNguoiNhan, @SoDienThoaiNguoiGui, GETDATE(), GETDATE(), 0)", connection, transaction);
+                    var command = new SqlCommand("INSERT INTO DonHang (KhachHangID, TrangThaiID, DiaChiNhanHang, DiaChiGiaoHang, SoDienThoaiNguoiNhan, SoDienThoaiNguoiGui, NgayTao, NgayCapNhat, IsDeleted, KhoangCach) OUTPUT INSERTED.DonHangID VALUES (@KhachHangID, 1, @DiaChiNhanHang, @DiaChiGiaoHang, @SoDienThoaiNguoiNhan, @SoDienThoaiNguoiGui, GETDATE(), GETDATE(), 0, @KhoangCach)", connection, transaction);
                     command.Parameters.AddWithValue("@KhachHangID", donHang.KhachHangID);
                     command.Parameters.AddWithValue("@DiaChiNhanHang", donHang.DiaChiNhanHang);
                     command.Parameters.AddWithValue("@DiaChiGiaoHang", donHang.DiaChiGiaoHang);
                     command.Parameters.AddWithValue("@SoDienThoaiNguoiNhan", donHang.SoDienThoaiNguoiNhan);
                     command.Parameters.AddWithValue("@SoDienThoaiNguoiGui", donHang.SoDienThoaiNguoiGui);
+                    command.Parameters.AddWithValue("@KhoangCach", donHang.KhoangCach); // Thêm tham số KhoangCach
 
                     var donHangId = (int)command.ExecuteScalar();
 
                     foreach (var chiTiet in donHang.ChiTietDonHang)
                     {
                         // Tính phí vận chuyển
-                        var tienVanChuyen = 35 * chiTiet.KhoiLuong;
+                        var tienVanChuyen = TinhPhiVanChuyen(donHang.KhoangCach, chiTiet.KhoiLuong);
 
                         var chiTietCommand = new SqlCommand("INSERT INTO ChiTietDonHang (DonHangID, TenHangHoa, TienThuHoCOD, TienVanChuyen, KhoiLuong, IsDeleted) VALUES (@DonHangID, @TenHangHoa, @TienThuHoCOD, @TienVanChuyen, @KhoiLuong, 0)", connection, transaction);
                         chiTietCommand.Parameters.AddWithValue("@DonHangID", donHangId);
@@ -220,6 +220,31 @@ public class KhachHangController : ControllerBase
                 }
             }
         }
+    }
+    private decimal TinhPhiVanChuyen(decimal khoangCach, decimal khoiLuong)
+    {
+        decimal donGiaKm = 5000m;
+        decimal donGiaKhoiLuong = 1000m;
+
+        decimal phiVanChuyen = (donGiaKm * khoangCach) + (donGiaKhoiLuong * khoiLuong);
+
+        TimeSpan currentTime = DateTime.Now.TimeOfDay;
+        if (currentTime >= new TimeSpan(18, 0, 0) || currentTime <= new TimeSpan(6, 0, 0))
+        {
+            phiVanChuyen += 2000m * khoangCach;
+        }
+
+        if (khoiLuong > 15)
+        {
+            phiVanChuyen += 1000m * khoangCach * (khoiLuong - 15);
+        }
+
+        if (khoangCach > 20)
+        {
+            phiVanChuyen += 1000m * (khoangCach - 20) / 2;
+        }
+
+        return phiVanChuyen;
     }
     [Authorize]
     [HttpGet("don-hang/{khachHangId}")]

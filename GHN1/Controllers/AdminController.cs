@@ -95,7 +95,6 @@ public class AdminController : ControllerBase
     }
 
 
-    [Authorize]
     [HttpGet("cho-duyet")]
     public IActionResult GetDonHangChoDuyet([FromQuery] DonHangChoDuyetQueryParams queryParams)
     {
@@ -317,7 +316,6 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
-    [Authorize]
     [HttpPost("duyet-don-hang")]
     public IActionResult DuyetDonHang(int donHangId, int adminId)
     {

@@ -8,5 +8,6 @@
         public string SoDienThoaiNguoiNhan { get; set; }
         public string SoDienThoaiNguoiGui { get; set; }
         public List<ChiTietDonHangModel> ChiTietDonHang { get; set; }
+        public decimal KhoangCach { get; set; } // Thêm trường KhoangCach
     }
 }

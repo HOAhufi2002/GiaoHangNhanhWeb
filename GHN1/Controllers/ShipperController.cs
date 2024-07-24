@@ -256,7 +256,6 @@ public class ShipperController : ControllerBase
             return Ok(donHangList);
         }
     }
-    [Authorize]
     // Cập nhật trạng thái đơn hàng sang Đang Giao Hàng và thêm ShipperID
     [HttpPost("nhan-don-hang")]
     public IActionResult NhanDonHang(int donHangId, int shipperId)
@@ -276,7 +275,7 @@ public class ShipperController : ControllerBase
                 return BadRequest(new { Message = "Đơn hàng không ở trạng thái 'Đã Duyệt'." });
             }
 
-            command = new SqlCommand("UPDATE DonHang SET TrangThaiID = 3, ShipperID = @ShipperID, NgayCapNhat = GETDATE() WHERE DonHangID = @DonHangID", connection);
+            command = new SqlCommand("UPDATE DonHang SET TrangThaiID = 3, ShipperID = @ShipperID, ThoiGianLayHang = GETDATE(), NgayCapNhat = GETDATE() WHERE DonHangID = @DonHangID", connection);
             command.Parameters.AddWithValue("@DonHangID", donHangId);
             command.Parameters.AddWithValue("@ShipperID", shipperId);
 
@@ -292,7 +291,6 @@ public class ShipperController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã chuyển sang trạng thái 'Đang Giao Hàng'." });
         }
     }
-    [Authorize]
     // Xác nhận đơn hàng đã giao
     [HttpPost("xac-nhan-giao-hang")]
     public IActionResult XacNhanGiaoHang(int donHangId)
@@ -312,7 +310,7 @@ public class ShipperController : ControllerBase
                 return BadRequest(new { Message = "Đơn hàng không ở trạng thái 'Đang Giao Hàng'." });
             }
 
-            command = new SqlCommand("UPDATE DonHang SET TrangThaiID = 4, NgayCapNhat = GETDATE() WHERE DonHangID = @DonHangID", connection);
+            command = new SqlCommand("UPDATE DonHang SET TrangThaiID = 4, ThoiGianNhanHang = GETDATE(), NgayCapNhat = GETDATE() WHERE DonHangID = @DonHangID", connection);
             command.Parameters.AddWithValue("@DonHangID", donHangId);
 
             connection.Open();
@@ -327,6 +325,7 @@ public class ShipperController : ControllerBase
             return Ok(new { Message = "Đơn hàng đã được xác nhận là 'Đã Giao'." });
         }
     }
+
     [Authorize]
     // Đánh dấu đơn hàng là Hoàn hàng đang xử lý
     [HttpPost("hoan-hang")]
